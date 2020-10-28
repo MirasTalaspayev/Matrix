@@ -1,72 +1,115 @@
 package Matrix;
 
-import javax.management.MBeanAttributeInfo;
-import javax.print.attribute.standard.Copies;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Matrix {
-    private ArrayList<ArrayList<Integer>> matrix;
+    private double[][] matrix;
     // Dimensions
     private int rows;
     private int columns;
-    public Matrix(){
-        matrix = new ArrayList<>();
-    }
-    public Matrix(List<ArrayList<Integer>> matrix){
+    public Matrix(List<ArrayList<Double>> matrix){
         this.rows = matrix.size();
         this.columns = matrix.get(0).size();
         for (int i = 0; i < matrix.size(); i++){
             for (int j = 0; j < matrix.get(0).size(); j++){
-                this.matrix.get(i).set(j, matrix.get(i).get(j));
+                this.matrix[i][j] = matrix.get(i).get(j);
             }
         }
     }
-    public Matrix(int[][] matrix) {
+    public Matrix(double[][] matrix) {
         this.rows = matrix.length;
         this.columns = matrix[0].length;
-        this.matrix = new ArrayList<>(rows);
-        for (ArrayList<Integer> row : this.matrix){
-            row = new ArrayList<>(columns);
-        }
+        this.matrix = new double[rows][columns];
 
 
         for (int i = 0; i < rows; i++){
-            for (int j = 0; j < columns; j++){
-                this.matrix.get(i).set(j, matrix[i][j]);
-            }
+            System.arraycopy(matrix[i], 0, this.matrix[i], 0, columns);
         }
     }
     public Matrix(int rows, int columns){
         this.rows = rows;
         this.columns = columns;
-        matrix = new ArrayList<>(rows);
-        for (ArrayList<Integer> row : matrix){
-            row = new ArrayList<>(columns);
-        }
+        matrix = new double[rows][columns];
     }
-    public void AddRow(){
-        this.matrix.add(new ArrayList<>(columns));
-    }
-    public void AddRow(ArrayList<Integer> row) throws MatrixDimensionsException {
-        if (row.size() != columns)
-            throw new MatrixDimensionsException();
-        ArrayList<Integer> tempRow = new ArrayList<>();
-        for (int i = 0; i < this.columns; i++){
-            tempRow.set(i, row.get(i));
-        }
-        this.matrix.add(tempRow);
-    }
-    public void AddColumn() {
 
-    }
     public String toString() {
         String result = "";
-        for (ArrayList<Integer> row : matrix) {
-            result += row.toString();
-            result += "\n";
+        for (int i = 0; i < rows; i++) {
+            result += "|";
+            for (int j = 0; j < columns - 1; j++) {
+                result += matrix[i][j];
+                result += " ";
+            }
+            result += matrix[i][columns - 1];
+            result += "|\n";
         }
         return result;
+    }
+    public Matrix UpperTriangleMatrix() {
+        return new Matrix(UpperArrayTriangle());
+    }
+    private double[][] UpperArrayTriangle() {
+        double[][] newMatrix = CopyMatrix();
+
+        int row = 0;
+        int column = 0;
+        while (row < rows && column < columns) {
+            if (newMatrix[row][column] == 0) {
+                for (int i = row + 1; i < rows; i++) {
+                    if (newMatrix[i][column] != 0) {
+                        ExchangeRows(i, row);
+                    }
+                }
+            }
+            if (newMatrix[row][column] == 0) {
+                column++;
+                continue;
+            }
+            for (int i = row + 1; i < rows; i++) {
+                double factor = newMatrix[i][column] / newMatrix[row][column];
+
+                for (int j = column; j < columns; j++) {
+                    newMatrix[i][j] = newMatrix[i][j] - newMatrix[row][j] * factor;
+                }
+            }
+            row++;
+            column++;
+        }
+        return newMatrix;
+    }
+    public Matrix RowReduce(){
+        double[][] newMatrix = UpperArrayTriangle();
+
+        return new Matrix(newMatrix);
+    }
+    public void ExchangeRows(int rowIndex1, int rowIndex2) {
+        double[] temp = new double[columns];
+        for (int i = 0; i < columns; i++) {
+            temp[i] = matrix[rowIndex1][i];
+        }
+        matrix[rowIndex1] = matrix[rowIndex2];
+        matrix[rowIndex2] = temp;
+    }
+    public double[][] CopyMatrix() {
+        double[][] newMatrix = new double[rows][columns];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++){
+                newMatrix[i][j] = matrix[i][j];
+            }
+        }
+        return newMatrix;
+    }
+    // It is implemented by multiplying diagonal entries (only invertible matrix)
+    public double Determinant() throws Exception {
+        if (rows != columns) {
+            throw new Exception("Determinants are only for Invertible Matrix"); //  Specific Exception could be created ??
+        }
+        double[][] upperTriangleMatrix = UpperArrayTriangle();
+        double determinant = 1;
+        for (int i = 0; i < rows; i++) {
+            determinant *= upperTriangleMatrix[i][i];
+        }
+        return determinant;
     }
 }
