@@ -28,40 +28,7 @@ public class Main {
         answer = answer.toLowerCase();
 
         if (answer.equals("yes")) {
-            String link_begin = "https://www.symbolab.com/solver/step-by-step/%5Cbegin%7Bpmatrix%7D";
-            String link_end = "%5Cend%7Bpmatrix%7D";
-            for (int i = 0; i < m.getRows(); i++) {
-                for (int j = 0; j < m.getColumns(); j++){
-                    link_begin += m.valueAtIndex(i, j);
-                    if (j != m.getColumns() - 1) {
-                        link_begin += "%26";
-                    }
-                }
-                if (i != m.getRows() - 1) {
-                    link_begin += "%5C%5C";
-                }
-            }
-            String link = link_begin + link_end;
-
-            String url = link;
-
-            if(Desktop.isDesktopSupported()){
-                Desktop desktop = Desktop.getDesktop();
-                try {
-                    desktop.browse(new URI(url));
-                } catch (IOException | URISyntaxException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }else {
-                Runtime runtime = Runtime.getRuntime();
-                try {
-                    runtime.exec("xdg-open " + url);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
+            m.CheckWithSymbolab();
         }
     }
 }

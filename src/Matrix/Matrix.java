@@ -1,5 +1,9 @@
 package Matrix;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,10 +12,13 @@ public class Matrix {
     // Dimensions
     private int rows;
     private int columns;
-    public Matrix(List<ArrayList<Double>> matrix){
+    public Matrix(List<ArrayList<Double>> matrix) throws Exception {
         this.rows = matrix.size();
         this.columns = matrix.get(0).size();
         for (int i = 0; i < matrix.size(); i++){
+            if (matrix.get(i).size() != this.columns){
+                throw new Exception(String.format("Parameter is not matrix type"));
+            }
             for (int j = 0; j < matrix.get(0).size(); j++){
                 this.matrix[i][j] = matrix.get(i).get(j);
             }
@@ -118,9 +125,44 @@ public class Matrix {
     public int getColumns() {
         return columns;
     }
+
     public double valueAtIndex(int row, int column) throws Exception {
         if (row >= rows || row < 0 || column >= columns || column < 0)
             throw new Exception("Out of Range.");
         return matrix[row][column];
+    }
+    public void CheckWithSymbolab(){
+        String link_begin = "https://www.symbolab.com/solver/step-by-step/%5Cbegin%7Bpmatrix%7D";
+        String link_end = "%5Cend%7Bpmatrix%7D";
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++){
+                link_begin += matrix[i][j];
+                if (j != columns - 1) {
+                    link_begin += "%26";
+                }
+            }
+            if (i != rows - 1) {
+                link_begin += "%5C%5C";
+            }
+        }
+        String url = link_begin + link_end;
+
+        if(Desktop.isDesktopSupported()){
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.browse(new URI(url));
+            } catch (IOException | URISyntaxException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }else {
+            Runtime runtime = Runtime.getRuntime();
+            try {
+                runtime.exec("xdg-open " + url);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 }
