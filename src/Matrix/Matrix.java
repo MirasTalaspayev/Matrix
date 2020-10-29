@@ -112,4 +112,15 @@ public class Matrix {
         }
         return determinant;
     }
+    public int getRows(){
+        return rows;
+    }
+    public int getColumns() {
+        return columns;
+    }
+    public double valueAtIndex(int row, int column) throws Exception {
+        if (row >= rows || row < 0 || column >= columns || column < 0)
+            throw new Exception("Out of Range.");
+        return matrix[row][column];
+    }
 }
