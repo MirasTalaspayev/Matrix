@@ -131,6 +131,42 @@ public class Matrix {
             throw new Exception("Out of Range.");
         return matrix[row][column];
     }
+    public Matrix Add(Matrix other) throws Exception {
+        if (other.columns != columns || other.rows != rows) {
+            throw new Exception("Can not add matrices with diferent dimensions");
+        }
+        double[][] newMatrix = new double[rows][columns];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                newMatrix[i][j] = matrix[i][j] + other.matrix[i][j];
+            }
+        }
+        return new Matrix(newMatrix);
+    }
+    public Matrix Subtract(Matrix other) throws Exception {
+        if (other.columns != columns || other.rows != rows) {
+            throw new Exception("Can not add matrices with diferent dimensions");
+        }
+        double[][] newMatrix = new double[rows][columns];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                newMatrix[i][j] = matrix[i][j] - other.matrix[i][j];
+            }
+        }
+        return new Matrix(newMatrix);
+    }
+    public Matrix Multiply(Matrix other) throws Exception {
+        if (columns != other.rows) {
+            throw new Exception("Multiplication is allowed only if the number of first's matrix columns equal to other's rows");
+        }
+        double[][] newMatrix = new double[rows][other.columns];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+
+            }
+        }
+        return new Matrix(newMatrix);
+    }
     public void CheckWithSymbolab(){
         String link_begin = "https://www.symbolab.com/solver/step-by-step/%5Cbegin%7Bpmatrix%7D";
         String link_end = "%5Cend%7Bpmatrix%7D";
